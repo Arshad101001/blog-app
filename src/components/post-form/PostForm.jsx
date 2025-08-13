@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button, RTE, Select, Input } from '../index'
 import appwriteService from '../../appwrite/config'
@@ -7,13 +7,14 @@ import { useSelector } from 'react-redux'
 
 
 function PostForm({ post }) {
+    const [status, setStatus] = useState('active')
 
     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
         defaultValues: {
             title: post?.title || '',
             slug: post?.slug || '',
             content: post?.content || '',
-            status: post?.status || 'active',
+            status: post?.status || status,
         },
     })
 
@@ -39,6 +40,7 @@ function PostForm({ post }) {
             }
         } else {
             const file = await (data.image[0] ? appwriteService.uploadFile(data.image[0]) : null)
+            // console.log(data);
 
             // console.log(file);
 
@@ -126,9 +128,11 @@ function PostForm({ post }) {
                 )}
                 <Select
                     options={["active", "inactive"]}
+                    onStatusChanged = {(prev) => setStatus(prev)}
                     label="Status"
                     className="mb-4"
                     {...register("status", { required: true })}
+                    onChange={(e) => setValue("status", e.target.value)}
                 />
                 <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
                     {post ? "Update" : "Submit"}

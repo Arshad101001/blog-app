@@ -105,13 +105,13 @@ export class Service {
         }
     }
 
-    async getPosts(queries = [Query.equal('status', 'active')]) {
+    async getPosts(column, value) {
         try {
             // return await this.databases.listDocuments(conf.appwriteDatabaseId, conf.appwriteCollectionId, queries);
 
             // const querySnapshot = await getDocs(collection(this.firestore, "article"));
 
-            const {data} = await supabase.from('blog').select().eq('status', 'active')
+            const {data} = await supabase.from('blog').select().eq(column, value)
             console.log(data);
             
             return data
